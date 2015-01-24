@@ -62,7 +62,7 @@ head(trainingSetSubject)
 
 # add subject to the training set as the first column
 trainingSet = cbind(trainingSetSubject,trainingSet)
-colnames(trainingSet)[1] = "Subject"
+colnames(trainingSet)[1] = "subject"
 
 
 
@@ -82,7 +82,7 @@ head(testSetSubject)
 
 # add subject to the test set as the first column
 testSet = cbind(testSetSubject,testSet)
-colnames(testSet)[1] = "Subject"
+colnames(testSet)[1] = "subject"
 
 
 ## Check if the dimensions of the training and test set match ##
@@ -104,7 +104,9 @@ combinedData = rbind(trainingSet, testSet)
 ###########################################################################
 
 # set the column names of the data, column names are the 
-colnames(combinedData) = c("Subject",features)
+
+# want to create a cleaner column names
+colnames(combinedData) = c("subject",make.names(tolower(features), unique = T))
 
 
 ################################################################################################
@@ -130,7 +132,7 @@ meansdtData = cbind(c(activityLabels[.(trainingSetLabels), activityName],
                        activityLabels[.(testSetLabels), activityName]),
                        meanstdData, stringsAsFactors = F)
 
-colnames(meansdtData)[1] = "Activity"
+colnames(meansdtData)[1] = "activity"
 
 
 
@@ -140,8 +142,8 @@ colnames(meansdtData)[1] = "Activity"
 ######################################################################################
 
 meansdtData = data.table(meansdtData)
-setkey(meansdtData,Activity, Subject)
+setkey(meansdtData,activity, subject)
 
-meanByActivitySubject = meansdtData[,lapply(.SD,mean), by = .(Activity,Subject)]
+meanByActivitySubject = meansdtData[,lapply(.SD,mean), by = .(activity,subject)]
 
 write.table(meanByActivitySubject, "meanByActivitySubject.txt", row.name = F)
