@@ -28,9 +28,9 @@ library(data.table)
 # Downloading and reading in data #
 ###################################
 
-download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./rawData.zip")
-
-unzip("./rawData.zip")
+# download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./rawData.zip")
+# 
+# unzip("./rawData.zip")
 
 # read in the featuresures file
 features = read.table("./UCI HAR Dataset/features.txt", stringsAsFactors = F)
@@ -56,6 +56,17 @@ head(trainingSet)
 trainingSetLabels = read.table("./UCI HAR Dataset/train/y_train.txt", stringsAsFactors = F)
 head(trainingSetLabels)
 
+# read in training set subject
+trainingSetSubject = read.table("./UCI HAR Dataset/train/subject_train.txt", stringsAsFactors = F)
+head(trainingSetSubject)
+
+# add subject to the training set as the first column
+trainingSet = cbind(trainingSetSubject,trainingSet)
+colnames(trainingSet)[1] = "Subject"
+
+
+
+
 ## read in the test set ##
 # read in test data
 testSet = read.table("./UCI HAR Dataset/test/X_test.txt", stringsAsFactors = F)
@@ -64,6 +75,15 @@ head(testSet)
 # read in test labels
 testSetLabels = read.table("./UCI HAR Dataset/test/y_test.txt", stringsAsFactors = F)
 head(testSetLabels)
+
+# read in test set subject
+testSetSubject = read.table("./UCI HAR Dataset/test/subject_test.txt", stringsAsFactors = F)
+head(testSetSubject)
+
+# add subject to the test set as the first column
+testSet = cbind(testSetSubject,testSet)
+colnames(testSet)[1] = "Subject"
+
 
 ## Check if the dimensions of the training and test set match ##
 dim(trainingSet)
@@ -79,24 +99,12 @@ dim(testSet)
 # combine the training and test set by row binding them, adds the test set at the end of the training set
 combinedData = rbind(trainingSet, testSet)
 
-
-###########################################################
-# Step 3. Use desciptive activity names to label the data #
-###########################################################
-
-# add labels to the data set, will use activityName from activity_labels.txt file.
-# Will look up activityName by the training and test set labels.
-# will be the first column in the data set
-combinedData = cbind(c(activityLabels[.(trainingSetLabels), activityName],
-                       activityLabels[.(testSetLabels), activityName]),
-                       combinedData, stringsAsFactors = F)
-
 ###########################################################################
 # 4. Appropriately labels the data set with descriptive variable names.   #
 ###########################################################################
 
 # set the column names of the data, column names are the 
-colnames(combinedData) = c("activity", features)
+colnames(combinedData) = c("Subject",features)
 
 
 ################################################################################################
@@ -106,12 +114,34 @@ colnames(combinedData) = c("activity", features)
 # find columns that include mean or std, but not meanFreq
 meanstdcol = grepl("(mean|std)[^meanFreq]", colnames(combinedData))
 
-# want to also get the activity column, column 1
+# want to include the subject, the first colum, so turn it to TRUE
 meanstdcol[1] = T
 
 meanstdData = combinedData[,meanstdcol]
 
-meanbyactivity = sapply(meanstdData[,-1],function(x){tapply(x,meanstdData[,1],mean)})
-meanbyactivity = cbind(rownames(meanbyactivity),meanbyactivity)
-colnames(meanbyactivity)[1] = "Activity"
-write.table(meanbyactivity, "meanbyactivity.txt", row.name = F)
+###########################################################
+# Step 3. Use desciptive activity names to label the data #
+###########################################################
+
+# add labels to the data set, will use activityName from activity_labels.txt file.
+# Will look up activityName by the training and test set labels.
+# will be the first column in the data set
+meansdtData = cbind(c(activityLabels[.(trainingSetLabels), activityName],
+                       activityLabels[.(testSetLabels), activityName]),
+                       meanstdData, stringsAsFactors = F)
+
+colnames(meansdtData)[1] = "Activity"
+
+
+
+######################################################################################
+# 5. From the data set in step 4, creates a second, independent tidy data set with   #
+# the average of each variable for each activity and each subject.                   #
+######################################################################################
+
+meansdtData = data.table(meansdtData)
+setkey(meansdtData,Activity, Subject)
+
+meanByActivitySubject = meansdtData[,lapply(.SD,mean), by = .(Activity,Subject)]
+
+write.table(meanByActivitySubject, "meanByActivitySubject.txt", row.name = F)

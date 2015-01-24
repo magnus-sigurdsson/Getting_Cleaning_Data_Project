@@ -1,6 +1,6 @@
-The meanbyactivity.txt dataset comes from a raw data collected from Samsung Galaxy S smarthpone about activities of 30 subjects while performing activites of daily living. See http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones for further information about the data.
+The meanByActivitySubject.txt dataset is a summary of observations by subject and activity from a raw data collected from Samsung Galaxy S smartphone about activities of 30 subjects while performing activites of daily living. See http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones for further information about the data.
 
-The raw test and training data was joined together, and the observations in the meanbyactivity.txt are the mean of each column in the raw dataset by activity, (laying, sitting, standing, walking, walking downstairs, walking upstairs). No other transformation was done.
+The raw test and training data was joined together, and the observations in the meanByActivitySubject.txt are the mean of each column in the raw dataset that measured mean and standard deviation, excluding columns with meanFrequency, by subject and activity, (laying, sitting, standing, walking, walking downstairs, walking upstairs). Each observations in the original dataset was standardized and ranged between -1 and 1, both inclusive. No other transformation was done.
 
 
 For further information on the raw data, please see a copy of the README.txt from the original dataset, pasted here below:
