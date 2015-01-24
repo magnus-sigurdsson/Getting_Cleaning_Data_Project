@@ -28,9 +28,9 @@ library(data.table)
 # Downloading and reading in data #
 ###################################
 
-# download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./rawData.zip")
-# 
-# unzip("./rawData.zip")
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./rawData.zip")
+
+unzip("./rawData.zip")
 
 # read in the featuresures file
 features = read.table("./UCI HAR Dataset/features.txt", stringsAsFactors = F)
