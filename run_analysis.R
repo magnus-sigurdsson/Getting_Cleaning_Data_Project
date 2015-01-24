@@ -22,16 +22,11 @@
 #     https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
 # 
 
-# Start with a fresh clean workspace, don't run this if you don't want to delete all variables
-rm(list=ls(all=TRUE))
-gc()
 library(data.table)
 
 ###################################
 # Downloading and reading in data #
 ###################################
-
-setwd("C:/Users/magnuss/datasciencecoursera/getting and cleaning data/Project")
 
 # download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./rawData.zip")
 # 
